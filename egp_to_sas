@@ -28,3 +28,29 @@ sas_code = extract_sas_code_from_egp(egp_file_path)
 # Print extracted SAS code
 for i, code in enumerate(sas_code, 1):
     print(f"\n--- SAS Code Block {i} ---\n{code}")
+
+#---------------------------------------------------------------
+
+
+import zipfile
+import xml.etree.ElementTree as ET
+
+def inspect_egp_file(egp_file_path):
+    with zipfile.ZipFile(egp_file_path, 'r') as z:
+        for file in z.namelist():
+            print(f"\n--- Checking: {file} ---")
+            if file.endswith('.xml') or 'Code' in file:
+                try:
+                    with z.open(file) as f:
+                        tree = ET.parse(f)
+                        root = tree.getroot()
+                        for elem in root.iter():
+                            if elem.text and elem.text.strip():
+                                print(f"Tag: {elem.tag} | Sample: {elem.text.strip()[:100]}")
+                                break  # just show first useful tag
+                except ET.ParseError:
+                    print("Skipped (not XML)")
+                    continue
+
+# Run this once to inspect
+inspect_egp_file('file-8J8CTKKR6LzZipnbida1QS.egp')

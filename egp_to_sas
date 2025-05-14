@@ -1,0 +1,30 @@
+import zipfile
+import os
+import xml.etree.ElementTree as ET
+
+def extract_sas_code_from_egp(egp_file_path):
+    sas_code_blocks = []
+
+    with zipfile.ZipFile(egp_file_path, 'r') as z:
+        for file in z.namelist():
+            # EGP files usually contain XMLs or "CodeNode" files with SAS code
+            if file.endswith('.xml') or "Code" in file:
+                with z.open(file) as f:
+                    try:
+                        tree = ET.parse(f)
+                        root = tree.getroot()
+                        for code_elem in root.iter('Code'):
+                            if code_elem.text:
+                                sas_code_blocks.append(code_elem.text.strip())
+                    except ET.ParseError:
+                        continue  # Skip files that are not valid XML
+
+    return sas_code_blocks
+
+# Example usage
+egp_file_path = 'file-TuXvSy4QZtACtUy58doK2t.egp'
+sas_code = extract_sas_code_from_egp(egp_file_path)
+
+# Print extracted SAS code
+for i, code in enumerate(sas_code, 1):
+    print(f"\n--- SAS Code Block {i} ---\n{code}")

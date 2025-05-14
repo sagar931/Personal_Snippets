@@ -1,6 +1,7 @@
 import zipfile
+import os
 
-def extract_sas_code_from_egp(egp_file_path):
+def extract_sas_code_and_write_to_file(egp_file_path):
     sas_code_blocks = []
 
     with zipfile.ZipFile(egp_file_path, 'r') as z:
@@ -14,16 +15,21 @@ def extract_sas_code_from_egp(egp_file_path):
                     except Exception as e:
                         print(f"Failed to read {file}: {e}")
 
-    return sas_code_blocks
+    # Get output file path: replace .egp with .sas
+    base_name = os.path.splitext(os.path.basename(egp_file_path))[0]
+    output_path = os.path.join(os.path.dirname(egp_file_path), f"{base_name}.sas")
 
-# Usage
+    # Write all blocks to a single .sas file
+    with open(output_path, 'w', encoding='utf-8') as f:
+        for i, code in enumerate(sas_code_blocks, 1):
+            f.write(f"/* --- SAS Code Block {i} --- */\n")
+            f.write(code + "\n\n")
+
+    print(f"\n✅ Combined SAS code saved to: {output_path}")
+
+# Example usage
 egp_file_path = 'file-MQZKfcMBtyuBUmxSk9DHdC.egp'
-sas_code = extract_sas_code_from_egp(egp_file_path)
-
-# Print SAS code
-for i, code in enumerate(sas_code, 1):
-    print(f"\n--- SAS Code Block {i} ---\n{code}")
-
+extract_sas_code_and_write_to_file(egp_file_path)
 #---------------------------------------------------------------
 
 

@@ -10,26 +10,23 @@ def extract_sas_code_and_write_to_file(egp_file_path):
                 print(f"\n--- Extracting from: {file} ---")
                 with z.open(file) as f:
                     try:
-                        content = f.read().decode('utf-8')
-                        sas_code_blocks.append(content.strip())
+                        # Try decoding with fallback for BOM or invalid chars
+                        content = f.read().decode('utf-8-sig', errors='replace')
+                        # Clean any weird Unicode replacements like U+FFFD (�)
+                        cleaned = content.replace('\ufeff', '').strip()
+                        sas_code_blocks.append(cleaned)
                     except Exception as e:
                         print(f"Failed to read {file}: {e}")
 
-    # Get output file path: replace .egp with .sas
     base_name = os.path.splitext(os.path.basename(egp_file_path))[0]
     output_path = os.path.join(os.path.dirname(egp_file_path), f"{base_name}.sas")
 
-    # Write all blocks to a single .sas file
     with open(output_path, 'w', encoding='utf-8') as f:
         for i, code in enumerate(sas_code_blocks, 1):
             f.write(f"/* --- SAS Code Block {i} --- */\n")
             f.write(code + "\n\n")
 
-    print(f"\n✅ Combined SAS code saved to: {output_path}")
-
-# Example usage
-egp_file_path = 'file-MQZKfcMBtyuBUmxSk9DHdC.egp'
-extract_sas_code_and_write_to_file(egp_file_path)
+    print(f"\n Combined SAS code saved to: {output_path}")
 #---------------------------------------------------------------
 
 

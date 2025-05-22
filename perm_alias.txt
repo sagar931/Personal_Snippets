@@ -1,0 +1,42 @@
+#----------------------------------------------------------------
+# Create the file
+touch ~/.my_aliases
+
+# Example aliases (edit this file to add more)
+echo "alias ll='ls -la'" >> ~/.my_aliases
+echo "alias gs='git status'" >> ~/.my_aliases
+
+
+#----------------------------------------------------------------
+
+#!/bin/bash
+
+# Ensure ~/.my_aliases exists
+touch ~/.my_aliases
+
+# Check if .bashrc or .zshrc already includes the alias source
+SHELL_RC="$HOME/.bashrc"
+if [[ "$SHELL" == */zsh ]]; then
+  SHELL_RC="$HOME/.zshrc"
+fi
+
+# Add alias sourcing line if not already present
+if ! grep -Fxq "source ~/.my_aliases" "$SHELL_RC"; then
+  echo "" >> "$SHELL_RC"
+  echo "# Load custom aliases" >> "$SHELL_RC"
+  echo "source ~/.my_aliases" >> "$SHELL_RC"
+  echo "Added alias loading to $SHELL_RC"
+else
+  echo "Alias source already present in $SHELL_RC"
+fi
+
+# Source the aliases immediately
+source ~/.my_aliases
+echo "Aliases loaded for this session"
+
+#----------------------------------------------------------------
+
+chmod +x load_aliases.sh
+./load_aliases.sh
+
+#----------------------------------------------------------------

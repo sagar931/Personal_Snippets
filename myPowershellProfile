@@ -1,148 +1,298 @@
-# Enhanced Connection Checker with Ping Times
-function Test-Connections {
-    Clear-Host
-    
-    # ASCII Art Banner (same as above)
-    Write-Host ""
-    Write-Host "    ██████╗  ██████╗ ██╗    ██╗███████╗██████╗ ███████╗██╗  ██╗███████╗██╗     ██╗     " -ForegroundColor Cyan
-    Write-Host "    ██╔══██╗██╔═══██╗██║    ██║██╔════╝██╔══██╗██╔════╝██║  ██║██╔════╝██║     ██║     " -ForegroundColor Cyan
-    Write-Host "    ██████╔╝██║   ██║██║ █╗ ██║█████╗  ██████╔╝███████╗███████║█████╗  ██║     ██║     " -ForegroundColor Blue
-    Write-Host "    ██╔═══╝ ██║   ██║██║███╗██║██╔══╝  ██╔══██╗╚════██║██╔══██║██╔══╝  ██║     ██║     " -ForegroundColor Blue
-    Write-Host "    ██║     ╚██████╔╝╚███╔███╔╝███████╗██║  ██║███████║██║  ██║███████╗███████╗███████╗" -ForegroundColor DarkBlue
-    Write-Host "    ╚═╝      ╚═════╝  ╚══╝╚══╝ ╚══════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝" -ForegroundColor DarkBlue
-    Write-Host ""
-    
-    # System Information
-    Write-Host " ╔══════════════════════════════════════════════════════╗" -ForegroundColor Magenta
-    Write-Host " ║" -ForegroundColor Magenta -NoNewline
-    Write-Host "  💻 User: " -ForegroundColor Yellow -NoNewline
-    Write-Host "$env:USERNAME@$env:COMPUTERNAME" -ForegroundColor White -NoNewline
-    Write-Host (" " * (38 - $env:USERNAME.Length - $env:COMPUTERNAME.Length)) -NoNewline
-    Write-Host "║" -ForegroundColor Magenta
-    Write-Host " ║" -ForegroundColor Magenta -NoNewline
-    Write-Host "  📅 Date: " -ForegroundColor Yellow -NoNewline
-    $dateStr = Get-Date -Format 'dddd, MMMM dd, yyyy HH:mm'
-    Write-Host "$dateStr" -ForegroundColor White -NoNewline
-    Write-Host (" " * (39 - $dateStr.Length)) -NoNewline
-    Write-Host "║" -ForegroundColor Magenta
-    Write-Host " ╚══════════════════════════════════════════════════════╝" -ForegroundColor Magenta
-    Write-Host ""
-    
-    # Define your IPs to check (CUSTOMIZE THESE!)
-    $servers = @(
-        @{Name="GQ Server"; IP="10.53.12.45"},
-        @{Name="BQ Server"; IP="10.223.12.15"},
-        @{Name="Power Broker"; IP="10.223.12.182"}
-    )
-    
-    Write-Host " 🌐 Network Connection Status" -ForegroundColor Cyan
-    Write-Host " 📡 Checking connections..." -ForegroundColor DarkGray
-    Write-Host ""
-    
-    # Table Header
-    Write-Host " ╔═══════════════════════╦═══════════════════╦══════════════════╗" -ForegroundColor White
-    Write-Host " ║" -ForegroundColor White -NoNewline
-    Write-Host " Server Name           " -ForegroundColor Yellow -NoNewline
-    Write-Host "║" -ForegroundColor White -NoNewline
-    Write-Host " IP Address        " -ForegroundColor Yellow -NoNewline
-    Write-Host "║" -ForegroundColor White -NoNewline
-    Write-Host " Connection       " -ForegroundColor Yellow -NoNewline
-    Write-Host "║" -ForegroundColor White
-    Write-Host " ╠═══════════════════════╬═══════════════════╬══════════════════╣" -ForegroundColor White
-    
-    # Test each server
-    foreach ($server in $servers) {
-        Write-Host " ║ " -ForegroundColor White -NoNewline
-        
-        # Server Name (pad to 21 characters)
-        $nameDisplay = $server.Name.PadRight(21)
-        Write-Host $nameDisplay -ForegroundColor Cyan -NoNewline
-        Write-Host " ║ " -ForegroundColor White -NoNewline
-        
-        # IP Address (pad to 17 characters)
-        $ipDisplay = $server.IP.PadRight(17)
-        Write-Host $ipDisplay -ForegroundColor White -NoNewline
-        Write-Host " ║ " -ForegroundColor White -NoNewline
-        
-        # Test connection with response time
-        try {
-            $pingResult = Test-Connection -ComputerName $server.IP -Count 1 -ErrorAction Stop
-            $responseTime = $pingResult.ResponseTime
-            
-            if ($responseTime -lt 50) {
-                Write-Host "✓ " -ForegroundColor Green -NoNewline
-                Write-Host "$($responseTime)ms" -ForegroundColor Green -NoNewline
-                Write-Host "       " -NoNewline
-            } elseif ($responseTime -lt 150) {
-                Write-Host "✓ " -ForegroundColor Yellow -NoNewline
-                Write-Host "$($responseTime)ms" -ForegroundColor Yellow -NoNewline
-                Write-Host "       " -NoNewline
-            } else {
-                Write-Host "⚠ " -ForegroundColor DarkYellow -NoNewline
-                Write-Host "$($responseTime)ms" -ForegroundColor DarkYellow -NoNewline
-                Write-Host "       " -NoNewline
-            }
-        } catch {
-            Write-Host "✗ Offline       " -ForegroundColor Red -NoNewline
-        }
-        
-        Write-Host " ║" -ForegroundColor White
-    }
-    
-    # Table Footer
-    Write-Host " ╚═══════════════════════╩═══════════════════╩══════════════════╝" -ForegroundColor White
-    Write-Host ""
-    Write-Host " ⚡ PowerShell $($PSVersionTable.PSVersion.ToString()) loaded!" -ForegroundColor Green
-    Write-Host ""
-}
+# ============================================
+# POWERSHELL PROFILE - ALIASES & FUNCTIONS
+# ============================================
 
-# Run on profile load
-Test-Connections
+# ============================================
+# CONFIGURATION VARIABLES
+# ============================================
 
-# SSH Functions
+# Tool Paths
+$PUTTY_PATH = "C:\dev\home\tools\putty\current"
+$PLINK = "$PUTTY_PATH\PLINK.EXE"
+$GIT_PATH = "C:\dev\home\tools\git\current\cmd"
+$GIT = "$GIT_PATH\git.exe"
+
+# Server Configuration
+$PROD_SERVER = "x@15458@7@10.53.12.45"
+$PROD_PASSWORD = "ex11@29@2gurgaon"
+$BACKUP_SERVER = "x@15458@7@10.223.12.182"
+
+# Common Directories
+$DEV_HOME = "C:\dev\home"
+$TOOLS = "$DEV_HOME\tools"
+
+# ============================================
+# SSH FUNCTIONS
+# ============================================
+
 function bn_f {
-    C:\dev\home\tools\putty\current\PLINK.EXE -ssh x@15458@7@10.53.12.45 -pw ex11@29@2gurgaon
+    & $PLINK -ssh $PROD_SERVER -pw $PROD_PASSWORD
 }
 
 function eq {
-    ssh x@15458@7@10.53.12.45
-    C:\dev\home\tools\putty\current\PLINK.EXE -ssh x@15458@7@10.53.12.45 -pw ex11@29@2gurgaon
+    ssh $PROD_SERVER
+    & $PLINK -ssh $PROD_SERVER -pw $PROD_PASSWORD
 }
 
 function pb {
-    ssh -o HMAC=hmac-sha2-512 x@15458@7@10.223.12.182
+    ssh -o HMAC=hmac-sha2-512 $BACKUP_SERVER
 }
 
-# Linux-style aliases
+# ============================================
+# LINUX-STYLE ALIASES
+# ============================================
+
+# Basic Commands
 Set-Alias ll Get-ChildItem
+Set-Alias ls Get-ChildItem
 Set-Alias grep Select-String
 Set-Alias vim nvim
 Set-Alias which Get-Command
 Set-Alias touch New-Item
 
-# Git shortcuts
-function gs { git status }
-function ga { git add . }
-function gc { param($msg) git commit -m $msg }
-function gp { git push }
-function gl { git log --oneline --graph }
+# ============================================
+# NAVIGATION FUNCTIONS
+# ============================================
 
-# Quick edit
+function .. { Set-Location .. }
+function ... { Set-Location ..\.. }
+function .... { Set-Location ..\..\.. }
+function ~ { Set-Location $HOME }
+function cd.. { Set-Location .. }
+
+# Quick directories
+function dev { Set-Location $DEV_HOME }
+function tools { Set-Location $TOOLS }
+function docs { Set-Location "$HOME\Documents" }
+function downloads { Set-Location "$HOME\Downloads" }
+function desktop { Set-Location "$HOME\Desktop" }
+
+# ============================================
+# FILE OPERATIONS
+# ============================================
+
+function la { Get-ChildItem -Force }
+function lsa { Get-ChildItem -Force }
+function rm { param($path) Remove-Item $path -Recurse -Force }
+function cp { param($src, $dest) Copy-Item $src $dest -Recurse }
+function mv { param($src, $dest) Move-Item $src $dest }
+function cat { param($file) Get-Content $file }
+function tail { param($file, $n=10) Get-Content $file -Tail $n }
+function head { param($file, $n=10) Get-Content $file -Head $n }
+function mkdir { param($name) New-Item -ItemType Directory -Path $name }
+function pwd { Get-Location }
+
+# ============================================
+# GIT SHORTCUTS
+# ============================================
+
+function gs { & $GIT status }
+function ga { & $GIT add . }
+function gc { param($msg) & $GIT commit -m $msg }
+function gp { & $GIT push }
+function gpl { & $GIT pull }
+function gl { & $GIT log --oneline --graph --decorate }
+function gd { & $GIT diff }
+function gb { & $GIT branch }
+function gco { param($branch) & $GIT checkout $branch }
+function gcb { param($branch) & $GIT checkout -b $branch }
+function gst { & $GIT stash }
+function gsta { & $GIT stash apply }
+
+# ============================================
+# SYSTEM UTILITIES
+# ============================================
+
+function df { Get-PSDrive }
+function ps { Get-Process }
+function kill { param($name) Stop-Process -Name $name -Force }
+function killall { param($name) Get-Process $name -ErrorAction SilentlyContinue | Stop-Process -Force }
+function uptime { 
+    $os = Get-CimInstance Win32_OperatingSystem
+    $uptime = (Get-Date) - $os.LastBootUpTime
+    Write-Host "Uptime: $($uptime.Days) days, $($uptime.Hours) hours, $($uptime.Minutes) minutes" -ForegroundColor Cyan
+}
+function whoami { Write-Host $env:USERNAME -ForegroundColor Green }
+function hostname { Write-Host $env:COMPUTERNAME -ForegroundColor Green }
+
+# ============================================
+# NETWORK UTILITIES
+# ============================================
+
+function ping { param($host) Test-Connection $host -Count 4 }
+function ports { netstat -ano }
+function myip { 
+    $ip = (Get-NetIPAddress -AddressFamily IPv4 | Where-Object {$_.InterfaceAlias -notlike "*Loopback*"} | Select-Object -First 1).IPAddress
+    Write-Host "Local IP: $ip" -ForegroundColor Cyan
+}
+function publicip { 
+    $ip = (Invoke-WebRequest -Uri "https://api.ipify.org" -UseBasicParsing).Content
+    Write-Host "Public IP: $ip" -ForegroundColor Cyan
+}
+
+# ============================================
+# POWERSHELL UTILITIES
+# ============================================
+
 function profile { code $PROFILE }
-function reload { . $PROFILE }
+function reload { . $PROFILE; Write-Host "Profile reloaded!" -ForegroundColor Green }
+function cls { Clear-Host }
+function h { Get-History }
+function hg { param($pattern) Get-History | Where-Object {$_.CommandLine -like "*$pattern*"} }
 
-# Enhanced modules
-Import-Module PSReadLine
-Import-Module Terminal-Icons
-Set-PSReadLineOption -PredictionSource History
-Set-PSReadLineOption -PredictionViewStyle ListView
+# ============================================
+# SYSTEM INFORMATION
+# ============================================
 
-# Oh-My-Posh theme
-oh-my-posh init pwsh --config "$env:POSH_THEMES_PATH\atomic.omp.json" | Invoke-Expression
+function sysinfo {
+    Write-Host ""
+    Write-Host "═══════════════════════════════════════" -ForegroundColor Cyan
+    Write-Host "           SYSTEM INFORMATION           " -ForegroundColor Yellow
+    Write-Host "═══════════════════════════════════════" -ForegroundColor Cyan
+    Write-Host ""
+    Write-Host "Computer Name : " -NoNewline -ForegroundColor Green
+    Write-Host $env:COMPUTERNAME
+    Write-Host "Username      : " -NoNewline -ForegroundColor Green
+    Write-Host $env:USERNAME
+    Write-Host "OS            : " -NoNewline -ForegroundColor Green
+    Write-Host (Get-CimInstance Win32_OperatingSystem).Caption
+    Write-Host "Architecture  : " -NoNewline -ForegroundColor Green
+    Write-Host $env:PROCESSOR_ARCHITECTURE
+    Write-Host "PowerShell    : " -NoNewline -ForegroundColor Green
+    Write-Host $PSVersionTable.PSVersion
+    Write-Host ""
+}
 
-# Welcome message
+# ============================================
+# DEVELOPMENT SHORTCUTS
+# ============================================
+
+# Node/NPM
+function ni { npm install }
+function nid { npm install --save-dev }
+function nig { npm install -g }
+function ns { npm start }
+function nt { npm test }
+function nr { param($script) npm run $script }
+
+# Python
+function py { python }
+function py3 { python3 }
+function pip { python -m pip }
+function venv { python -m venv venv }
+function activate { .\venv\Scripts\Activate.ps1 }
+
+# Docker
+function d { docker }
+function dc { docker-compose }
+function dps { docker ps }
+function dpsa { docker ps -a }
+function di { docker images }
+
+# ============================================
+# FUN UTILITIES
+# ============================================
+
+function weather {
+    param($city = "Delhi")
+    (Invoke-WebRequest -Uri "http://wttr.in/$city" -UseBasicParsing).Content
+}
+
+function joke {
+    $response = Invoke-RestMethod -Uri "https://official-joke-api.appspot.com/random_joke"
+    Write-Host ""
+    Write-Host $response.setup -ForegroundColor Cyan
+    Start-Sleep -Seconds 2
+    Write-Host $response.punchline -ForegroundColor Yellow
+    Write-Host ""
+}
+
+# ============================================
+# ENHANCED MODULES (Optional - Install if needed)
+# ============================================
+
+# PSReadLine for better autocomplete
+if (Get-Module -ListAvailable -Name PSReadLine) {
+    Import-Module PSReadLine
+    Set-PSReadLineOption -PredictionSource History
+    Set-PSReadLineOption -PredictionViewStyle ListView
+    Set-PSReadLineOption -EditMode Windows
+    Set-PSReadLineKeyHandler -Key Tab -Function MenuComplete
+}
+
+# Terminal-Icons for colorful icons
+if (Get-Module -ListAvailable -Name Terminal-Icons) {
+    Import-Module Terminal-Icons
+}
+
+# ============================================
+# OH-MY-POSH THEME (Optional - Uncomment if installed)
+# ============================================
+
+# oh-my-posh init pwsh --config "$env:POSH_THEMES_PATH\atomic.omp.json" | Invoke-Expression
+
+# ============================================
+# WELCOME MESSAGE
+# ============================================
+
 Clear-Host
-Write-Host "⚡ PowerShell $($PSVersionTable.PSVersion) " -ForegroundColor Cyan -NoNewline
-Write-Host "loaded!" -ForegroundColor Green
-Write-Host "👤 Welcome, $env:USERNAME!" -ForegroundColor Yellow
 Write-Host ""
+Write-Host "╔══════════════════════════════════════════════════════╗" -ForegroundColor Cyan
+Write-Host "║                                                      ║" -ForegroundColor Cyan
+Write-Host "║            " -ForegroundColor Cyan -NoNewline
+Write-Host "⚡ POWERSHELL PROFILE LOADED ⚡" -ForegroundColor Yellow -NoNewline
+Write-Host "             ║" -ForegroundColor Cyan
+Write-Host "║                                                      ║" -ForegroundColor Cyan
+Write-Host "╚══════════════════════════════════════════════════════╝" -ForegroundColor Cyan
+Write-Host ""
+Write-Host "  💻 User: " -ForegroundColor Green -NoNewline
+Write-Host "$env:USERNAME@$env:COMPUTERNAME" -ForegroundColor White
+Write-Host "  📅 Date: " -ForegroundColor Green -NoNewline
+Write-Host (Get-Date -Format "dddd, MMMM dd, yyyy HH:mm") -ForegroundColor White
+Write-Host "  🚀 PowerShell " -ForegroundColor Green -NoNewline
+Write-Host $PSVersionTable.PSVersion -ForegroundColor White
+Write-Host ""
+Write-Host "  Type " -NoNewline
+Write-Host "'help-aliases'" -ForegroundColor Yellow -NoNewline
+Write-Host " to see all available shortcuts" -ForegroundColor Gray
+Write-Host ""
+
+# ============================================
+# HELP FUNCTION
+# ============================================
+
+function help-aliases {
+    Write-Host ""
+    Write-Host "═══════════════════════════════════════════════════════" -ForegroundColor Cyan
+    Write-Host "               AVAILABLE ALIASES & FUNCTIONS            " -ForegroundColor Yellow
+    Write-Host "═══════════════════════════════════════════════════════" -ForegroundColor Cyan
+    Write-Host ""
+    
+    Write-Host "SSH Connections:" -ForegroundColor Green
+    Write-Host "  bn_f, eq, pb" -ForegroundColor White
+    Write-Host ""
+    
+    Write-Host "Navigation:" -ForegroundColor Green
+    Write-Host "  .., ..., ...., ~, dev, tools, docs, downloads, desktop" -ForegroundColor White
+    Write-Host ""
+    
+    Write-Host "File Operations:" -ForegroundColor Green
+    Write-Host "  ll, ls, la, cat, tail, head, rm, cp, mv, mkdir, touch" -ForegroundColor White
+    Write-Host ""
+    
+    Write-Host "Git Commands:" -ForegroundColor Green
+    Write-Host "  gs, ga, gc, gp, gpl, gl, gd, gb, gco, gcb, gst" -ForegroundColor White
+    Write-Host ""
+    
+    Write-Host "System:" -ForegroundColor Green
+    Write-Host "  ps, kill, uptime, whoami, hostname, sysinfo, myip, publicip" -ForegroundColor White
+    Write-Host ""
+    
+    Write-Host "PowerShell:" -ForegroundColor Green
+    Write-Host "  profile, reload, cls, h, hg" -ForegroundColor White
+    Write-Host ""
+    
+    Write-Host "Fun:" -ForegroundColor Green
+    Write-Host "  weather, joke" -ForegroundColor White
+    Write-Host ""
+}

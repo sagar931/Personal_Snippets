@@ -1,0 +1,148 @@
+# Enhanced Connection Checker with Ping Times
+function Test-Connections {
+    Clear-Host
+    
+    # ASCII Art Banner (same as above)
+    Write-Host ""
+    Write-Host "    ██████╗  ██████╗ ██╗    ██╗███████╗██████╗ ███████╗██╗  ██╗███████╗██╗     ██╗     " -ForegroundColor Cyan
+    Write-Host "    ██╔══██╗██╔═══██╗██║    ██║██╔════╝██╔══██╗██╔════╝██║  ██║██╔════╝██║     ██║     " -ForegroundColor Cyan
+    Write-Host "    ██████╔╝██║   ██║██║ █╗ ██║█████╗  ██████╔╝███████╗███████║█████╗  ██║     ██║     " -ForegroundColor Blue
+    Write-Host "    ██╔═══╝ ██║   ██║██║███╗██║██╔══╝  ██╔══██╗╚════██║██╔══██║██╔══╝  ██║     ██║     " -ForegroundColor Blue
+    Write-Host "    ██║     ╚██████╔╝╚███╔███╔╝███████╗██║  ██║███████║██║  ██║███████╗███████╗███████╗" -ForegroundColor DarkBlue
+    Write-Host "    ╚═╝      ╚═════╝  ╚══╝╚══╝ ╚══════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝" -ForegroundColor DarkBlue
+    Write-Host ""
+    
+    # System Information
+    Write-Host " ╔══════════════════════════════════════════════════════╗" -ForegroundColor Magenta
+    Write-Host " ║" -ForegroundColor Magenta -NoNewline
+    Write-Host "  💻 User: " -ForegroundColor Yellow -NoNewline
+    Write-Host "$env:USERNAME@$env:COMPUTERNAME" -ForegroundColor White -NoNewline
+    Write-Host (" " * (38 - $env:USERNAME.Length - $env:COMPUTERNAME.Length)) -NoNewline
+    Write-Host "║" -ForegroundColor Magenta
+    Write-Host " ║" -ForegroundColor Magenta -NoNewline
+    Write-Host "  📅 Date: " -ForegroundColor Yellow -NoNewline
+    $dateStr = Get-Date -Format 'dddd, MMMM dd, yyyy HH:mm'
+    Write-Host "$dateStr" -ForegroundColor White -NoNewline
+    Write-Host (" " * (39 - $dateStr.Length)) -NoNewline
+    Write-Host "║" -ForegroundColor Magenta
+    Write-Host " ╚══════════════════════════════════════════════════════╝" -ForegroundColor Magenta
+    Write-Host ""
+    
+    # Define your IPs to check (CUSTOMIZE THESE!)
+    $servers = @(
+        @{Name="GQ Server"; IP="10.53.12.45"},
+        @{Name="BQ Server"; IP="10.223.12.15"},
+        @{Name="Power Broker"; IP="10.223.12.182"}
+    )
+    
+    Write-Host " 🌐 Network Connection Status" -ForegroundColor Cyan
+    Write-Host " 📡 Checking connections..." -ForegroundColor DarkGray
+    Write-Host ""
+    
+    # Table Header
+    Write-Host " ╔═══════════════════════╦═══════════════════╦══════════════════╗" -ForegroundColor White
+    Write-Host " ║" -ForegroundColor White -NoNewline
+    Write-Host " Server Name           " -ForegroundColor Yellow -NoNewline
+    Write-Host "║" -ForegroundColor White -NoNewline
+    Write-Host " IP Address        " -ForegroundColor Yellow -NoNewline
+    Write-Host "║" -ForegroundColor White -NoNewline
+    Write-Host " Connection       " -ForegroundColor Yellow -NoNewline
+    Write-Host "║" -ForegroundColor White
+    Write-Host " ╠═══════════════════════╬═══════════════════╬══════════════════╣" -ForegroundColor White
+    
+    # Test each server
+    foreach ($server in $servers) {
+        Write-Host " ║ " -ForegroundColor White -NoNewline
+        
+        # Server Name (pad to 21 characters)
+        $nameDisplay = $server.Name.PadRight(21)
+        Write-Host $nameDisplay -ForegroundColor Cyan -NoNewline
+        Write-Host " ║ " -ForegroundColor White -NoNewline
+        
+        # IP Address (pad to 17 characters)
+        $ipDisplay = $server.IP.PadRight(17)
+        Write-Host $ipDisplay -ForegroundColor White -NoNewline
+        Write-Host " ║ " -ForegroundColor White -NoNewline
+        
+        # Test connection with response time
+        try {
+            $pingResult = Test-Connection -ComputerName $server.IP -Count 1 -ErrorAction Stop
+            $responseTime = $pingResult.ResponseTime
+            
+            if ($responseTime -lt 50) {
+                Write-Host "✓ " -ForegroundColor Green -NoNewline
+                Write-Host "$($responseTime)ms" -ForegroundColor Green -NoNewline
+                Write-Host "       " -NoNewline
+            } elseif ($responseTime -lt 150) {
+                Write-Host "✓ " -ForegroundColor Yellow -NoNewline
+                Write-Host "$($responseTime)ms" -ForegroundColor Yellow -NoNewline
+                Write-Host "       " -NoNewline
+            } else {
+                Write-Host "⚠ " -ForegroundColor DarkYellow -NoNewline
+                Write-Host "$($responseTime)ms" -ForegroundColor DarkYellow -NoNewline
+                Write-Host "       " -NoNewline
+            }
+        } catch {
+            Write-Host "✗ Offline       " -ForegroundColor Red -NoNewline
+        }
+        
+        Write-Host " ║" -ForegroundColor White
+    }
+    
+    # Table Footer
+    Write-Host " ╚═══════════════════════╩═══════════════════╩══════════════════╝" -ForegroundColor White
+    Write-Host ""
+    Write-Host " ⚡ PowerShell $($PSVersionTable.PSVersion.ToString()) loaded!" -ForegroundColor Green
+    Write-Host ""
+}
+
+# Run on profile load
+Test-Connections
+
+# SSH Functions
+function bn_f {
+    C:\dev\home\tools\putty\current\PLINK.EXE -ssh x@15458@7@10.53.12.45 -pw ex11@29@2gurgaon
+}
+
+function eq {
+    ssh x@15458@7@10.53.12.45
+    C:\dev\home\tools\putty\current\PLINK.EXE -ssh x@15458@7@10.53.12.45 -pw ex11@29@2gurgaon
+}
+
+function pb {
+    ssh -o HMAC=hmac-sha2-512 x@15458@7@10.223.12.182
+}
+
+# Linux-style aliases
+Set-Alias ll Get-ChildItem
+Set-Alias grep Select-String
+Set-Alias vim nvim
+Set-Alias which Get-Command
+Set-Alias touch New-Item
+
+# Git shortcuts
+function gs { git status }
+function ga { git add . }
+function gc { param($msg) git commit -m $msg }
+function gp { git push }
+function gl { git log --oneline --graph }
+
+# Quick edit
+function profile { code $PROFILE }
+function reload { . $PROFILE }
+
+# Enhanced modules
+Import-Module PSReadLine
+Import-Module Terminal-Icons
+Set-PSReadLineOption -PredictionSource History
+Set-PSReadLineOption -PredictionViewStyle ListView
+
+# Oh-My-Posh theme
+oh-my-posh init pwsh --config "$env:POSH_THEMES_PATH\atomic.omp.json" | Invoke-Expression
+
+# Welcome message
+Clear-Host
+Write-Host "⚡ PowerShell $($PSVersionTable.PSVersion) " -ForegroundColor Cyan -NoNewline
+Write-Host "loaded!" -ForegroundColor Green
+Write-Host "👤 Welcome, $env:USERNAME!" -ForegroundColor Yellow
+Write-Host ""

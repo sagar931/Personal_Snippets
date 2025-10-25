@@ -283,7 +283,117 @@ function help-aliases {
     Write-Host "Git Commands:" -ForegroundColor Green
     Write-Host "  gs, ga, gc, gp, gpl, gl, gd, gb, gco, gcb, gst" -ForegroundColor White
     Write-Host ""
-    
+Write-Host "Git Commands:" -ForegroundColor Green
+Write-Host ""
+Write-Host " ┌─────────┬──────────────────────────┬─────────────────────────────────┐" -ForegroundColor DarkGray
+Write-Host " │ " -ForegroundColor DarkGray -NoNewline
+Write-Host "Alias  " -ForegroundColor Yellow -NoNewline
+Write-Host " │ " -ForegroundColor DarkGray -NoNewline
+Write-Host "Command                 " -ForegroundColor Yellow -NoNewline
+Write-Host " │ " -ForegroundColor DarkGray -NoNewline
+Write-Host "Use Case                       " -ForegroundColor Yellow -NoNewline
+Write-Host " │" -ForegroundColor DarkGray
+Write-Host " ├─────────┼──────────────────────────┼─────────────────────────────────┤" -ForegroundColor DarkGray
+
+Write-Host " │ " -ForegroundColor DarkGray -NoNewline
+Write-Host "gs     " -ForegroundColor Cyan -NoNewline
+Write-Host " │ " -ForegroundColor DarkGray -NoNewline
+Write-Host "git status              " -ForegroundColor White -NoNewline
+Write-Host " │ " -ForegroundColor DarkGray -NoNewline
+Write-Host "Check current changes          " -ForegroundColor Gray -NoNewline
+Write-Host " │" -ForegroundColor DarkGray
+
+Write-Host " │ " -ForegroundColor DarkGray -NoNewline
+Write-Host "ga     " -ForegroundColor Cyan -NoNewline
+Write-Host " │ " -ForegroundColor DarkGray -NoNewline
+Write-Host "git add .               " -ForegroundColor White -NoNewline
+Write-Host " │ " -ForegroundColor DarkGray -NoNewline
+Write-Host "Stage all changes              " -ForegroundColor Gray -NoNewline
+Write-Host " │" -ForegroundColor DarkGray
+
+Write-Host " │ " -ForegroundColor DarkGray -NoNewline
+Write-Host "gc     " -ForegroundColor Cyan -NoNewline
+Write-Host " │ " -ForegroundColor DarkGray -NoNewline
+Write-Host "git commit -m 'msg'     " -ForegroundColor White -NoNewline
+Write-Host " │ " -ForegroundColor DarkGray -NoNewline
+Write-Host "Commit: gc 'fix bug'           " -ForegroundColor Gray -NoNewline
+Write-Host " │" -ForegroundColor DarkGray
+
+Write-Host " │ " -ForegroundColor DarkGray -NoNewline
+Write-Host "gp     " -ForegroundColor Cyan -NoNewline
+Write-Host " │ " -ForegroundColor DarkGray -NoNewline
+Write-Host "git push                " -ForegroundColor White -NoNewline
+Write-Host " │ " -ForegroundColor DarkGray -NoNewline
+Write-Host "Push commits to remote         " -ForegroundColor Gray -NoNewline
+Write-Host " │" -ForegroundColor DarkGray
+
+Write-Host " │ " -ForegroundColor DarkGray -NoNewline
+Write-Host "gpl    " -ForegroundColor Cyan -NoNewline
+Write-Host " │ " -ForegroundColor DarkGray -NoNewline
+Write-Host "git pull                " -ForegroundColor White -NoNewline
+Write-Host " │ " -ForegroundColor DarkGray -NoNewline
+Write-Host "Pull changes from remote       " -ForegroundColor Gray -NoNewline
+Write-Host " │" -ForegroundColor DarkGray
+
+Write-Host " │ " -ForegroundColor DarkGray -NoNewline
+Write-Host "gl     " -ForegroundColor Cyan -NoNewline
+Write-Host " │ " -ForegroundColor DarkGray -NoNewline
+Write-Host "git log --oneline       " -ForegroundColor White -NoNewline
+Write-Host " │ " -ForegroundColor DarkGray -NoNewline
+Write-Host "View commit history            " -ForegroundColor Gray -NoNewline
+Write-Host " │" -ForegroundColor DarkGray
+
+Write-Host " │ " -ForegroundColor DarkGray -NoNewline
+Write-Host "gd     " -ForegroundColor Cyan -NoNewline
+Write-Host " │ " -ForegroundColor DarkGray -NoNewline
+Write-Host "git diff                " -ForegroundColor White -NoNewline
+Write-Host " │ " -ForegroundColor DarkGray -NoNewline
+Write-Host "Show file differences          " -ForegroundColor Gray -NoNewline
+Write-Host " │" -ForegroundColor DarkGray
+
+Write-Host " │ " -ForegroundColor DarkGray -NoNewline
+Write-Host "gb     " -ForegroundColor Cyan -NoNewline
+Write-Host " │ " -ForegroundColor DarkGray -NoNewline
+Write-Host "git branch              " -ForegroundColor White -NoNewline
+Write-Host " │ " -ForegroundColor DarkGray -NoNewline
+Write-Host "List all branches              " -ForegroundColor Gray -NoNewline
+Write-Host " │" -ForegroundColor DarkGray
+
+Write-Host " │ " -ForegroundColor DarkGray -NoNewline
+Write-Host "gco    " -ForegroundColor Cyan -NoNewline
+Write-Host " │ " -ForegroundColor DarkGray -NoNewline
+Write-Host "git checkout <branch>   " -ForegroundColor White -NoNewline
+Write-Host " │ " -ForegroundColor DarkGray -NoNewline
+Write-Host "Switch: gco main               " -ForegroundColor Gray -NoNewline
+Write-Host " │" -ForegroundColor DarkGray
+
+Write-Host " │ " -ForegroundColor DarkGray -NoNewline
+Write-Host "gcb    " -ForegroundColor Cyan -NoNewline
+Write-Host " │ " -ForegroundColor DarkGray -NoNewline
+Write-Host "git checkout -b <branch>" -ForegroundColor White -NoNewline
+Write-Host " │ " -ForegroundColor DarkGray -NoNewline
+Write-Host "Create: gcb feature/new        " -ForegroundColor Gray -NoNewline
+Write-Host " │" -ForegroundColor DarkGray
+
+Write-Host " │ " -ForegroundColor DarkGray -NoNewline
+Write-Host "gst    " -ForegroundColor Cyan -NoNewline
+Write-Host " │ " -ForegroundColor DarkGray -NoNewline
+Write-Host "git stash               " -ForegroundColor White -NoNewline
+Write-Host " │ " -ForegroundColor DarkGray -NoNewline
+Write-Host "Save changes temporarily       " -ForegroundColor Gray -NoNewline
+Write-Host " │" -ForegroundColor DarkGray
+
+Write-Host " │ " -ForegroundColor DarkGray -NoNewline
+Write-Host "gsta   " -ForegroundColor Cyan -NoNewline
+Write-Host " │ " -ForegroundColor DarkGray -NoNewline
+Write-Host "git stash apply         " -ForegroundColor White -NoNewline
+Write-Host " │ " -ForegroundColor DarkGray -NoNewline
+Write-Host "Restore stashed changes        " -ForegroundColor Gray -NoNewline
+Write-Host " │" -ForegroundColor DarkGray
+
+Write-Host " └─────────┴──────────────────────────┴─────────────────────────────────┘" -ForegroundColor DarkGray
+Write-Host ""
+
     Write-Host "System:" -ForegroundColor Green
     Write-Host "  ps, kill, uptime, whoami, hostname, sysinfo, myip, publicip" -ForegroundColor White
     Write-Host ""

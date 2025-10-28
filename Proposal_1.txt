@@ -1,0 +1,191 @@
+Team Structure Table
+
++------------------+------------------------+----------------------+---------------------+-----------+---------------+--+
+| Team             | Service Account (Unix) | AD Functional Group  | Unix Group (Mapped) | Team Size | Jupyter Port  |  |
++------------------+------------------------+----------------------+---------------------+-----------+---------------+--+
+| Banking          | sysbdhp_banking        | fGLJupyterBanking    | jupyter_banking     | 10 users  | 8921          |  |
+| Credit Card      | sysbdhp_creditcard     | fGLJupyterCreditCard | jupyter_creditcard  | 10 users  | 8922          |  |
+| Debit Card       | sysbdhp_debitcard      | fGLJupyterDebitCard  | jupyter_debitcard   | 10 users  | 8923          |  |
+| Shared Resources | N/A                    | fGLJupyterShared     | jupyter_shared      | All 30    | N/A           |  |
++------------------+------------------------+----------------------+---------------------+-----------+---------------+--+
+
+User-to-Team Mapping
+
+Banking Team (10 Users)
+
++---------------+-----------------------------+------------------+-------------------------------------+-----------------+---------------+--+
+| Employee Name | AD Username                 | AD Primary Group | AD Member Of                        | Access Level    | Jupyter Port  |  |
++---------------+-----------------------------+------------------+-------------------------------------+-----------------+---------------+--+
+| John Smith    | john.smith@barcapint.com    | Domain Users     | fGLJupyterBanking                   | Team Member     | 8921          |  |
+| Sarah Johnson | sarah.johnson@barcapint.com | Domain Users     | fGLJupyterBanking, fGLJupyterShared | Team Member     | 8922          |  |
+| Michael Brown | michael.brown@barcapint.com | Domain Users     | fGLJupyterBanking                   | Team Lead       | 8923          |  |
+| Emily Davis   | emily.davis@barcapint.com   | Domain Users     | fGLJupyterBanking                   | Data Scientist  |               |  |
+| David Wilson  | david.wilson@barcapint.com  | Domain Users     | fGLJupyterBanking                   | Analyst         |               |  |
+| Jennifer Lee  | jennifer.lee@barcapint.com  | Domain Users     | fGLJupyterBanking                   | Analyst         |               |  |
+| Robert Chen   | robert.chen@barcapint.com   | Domain Users     | fGLJupyterBanking                   | Engineer        |               |  |
+| Lisa Martinez | lisa.martinez@barcapint.com | Domain Users     | fGLJupyterBanking                   | Engineer        |               |  |
+| James Taylor  | james.taylor@barcapint.com  | Domain Users     | fGLJupyterBanking                   | Analyst         |               |  |
+| Maria Garcia  | maria.garcia@barcapint.com  | Domain Users     | fGLJupyterBanking                   | Data Scientist  | N/A           |  |
++---------------+-----------------------------+------------------+-------------------------------------+-----------------+---------------+--+
+
+PowerBroker Access:
+john.smith@barcapint.com → pbrun -u sysbdhp_banking bash
+
+Credit Card Team (10 Users)
++-------------------+---------------------------------+------------------+----------------------+-----------------+---------------+--+
+| Employee Name     | AD Username                     | AD Primary Group | AD Member Of         | Access Level    | Jupyter Port  |  |
++-------------------+---------------------------------+------------------+----------------------+-----------------+---------------+--+
+| Thomas Anderson   | thomas.anderson@barcapint.com   | Domain Users     | fGLJupyterCreditCard | Team Lead       | 8921          |  |
+| Patricia White    | patricia.white@barcapint.com    | Domain Users     | fGLJupyterCreditCard | Data Scientist  | 8922          |  |
+| Christopher Moore | christopher.moore@barcapint.com | Domain Users     | fGLJupyterCreditCard | Analyst         | 8923          |  |
+| Linda Jackson     | linda.jackson@barcapint.com     | Domain Users     | fGLJupyterCreditCard | Analyst         |               |  |
+| Daniel Thomas     | daniel.thomas@barcapint.com     | Domain Users     | fGLJupyterCreditCard | Engineer        |               |  |
+| Barbara Harris    | barbara.harris@barcapint.com    | Domain Users     | fGLJupyterCreditCard | Engineer        |               |  |
+| Matthew Clark     | matthew.clark@barcapint.com     | Domain Users     | fGLJupyterCreditCard | Data Scientist  |               |  |
+| Susan Lewis       | susan.lewis@barcapint.com       | Domain Users     | fGLJupyterCreditCard | Analyst         |               |  |
+| Joseph Walker     | joseph.walker@barcapint.com     | Domain Users     | fGLJupyterCreditCard | Analyst         |               |  |
+| Karen Hall        | karen.hall@barcapint.com        | Domain Users     | fGLJupyterCreditCard | Engineer        | N/A           |  |
++-------------------+---------------------------------+------------------+----------------------+-----------------+---------------+--+
+
+PowerBroker Access:
+thomas.anderson@barcapint.com → pbrun -u sysbdhp_creditcard bash
+
+┌─────────────────────────────────────────────────────────────────┐
+│                    Active Directory Structure                   │
+│                                                                 │
+│  ┌────────────────────────────────────────────────────────────┐ │
+│  │ Functional Groups (Created in AD)                          │ │
+│  ├────────────────────────────────────────────────────────────┤ │
+│  │ • fGLJupyterBanking        (10 members)                    │ │
+│  │ • fGLJupyterCreditCard     (10 members)                    │ │
+│  │ • fGLJupyterDebitCard      (10 members)                    │ │
+│  │ • fGLJupyterShared         (30 members - all teams)        │ │
+│  └────────────────────────────────────────────────────────────┘ │
+│                                                                 │
+│  ┌────────────────────────────────────────────────────────────┐ │
+│  │ User Accounts (30 total)                                   │ │
+│  ├────────────────────────────────────────────────────────────┤ │
+│  │ john.smith@barcapint.com    → fGLJupyterBanking            │ │
+│  │ sarah.johnson@barcapint.com → fGLJupyterBanking            │ │
+│  │ thomas.anderson@barcapint.com → fGLJupyterCreditCard       │ │
+│  │ richard.allen@barcapint.com → fGLJupyterDebitCard          │ │
+│  │ ... (26 more users)                                        │ │
+│  └────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────┘
+                              ↓
+                    [SSSD/Winbind/RFC2307]
+                    [AD-Unix Integration]
+                              ↓
+┌─────────────────────────────────────────────────────────────────┐
+│           Unix/Linux Edge Node (gbrpsr000021234)                │
+│                                                                 │
+│  ┌────────────────────────────────────────────────────────────┐ │
+│  │ Service Accounts (Created in Unix, registered in AD)       │ │
+│  ├────────────────────────────────────────────────────────────┤ │
+│  │ sysbdhp_banking      (GID: 5001)                           │ │
+│  │ sysbdhp_creditcard   (GID: 5002)                           │ │
+│  │ sysbdhp_debitcard    (GID: 5003)                           │ │
+│  └────────────────────────────────────────────────────────────┘ │
+│                                                                 │
+│  ┌────────────────────────────────────────────────────────────┐ │
+│  │ Unix Groups (Mapped from AD Functional Groups)             │ │
+│  ├────────────────────────────────────────────────────────────┤ │
+│  │ jupyter_banking     (GID: 5001) ← fGLJupyterBanking        │ │
+│  │ jupyter_creditcard  (GID: 5002) ← fGLJupyterCreditCard     │ │
+│  │ jupyter_debitcard   (GID: 5003) ← fGLJupyterDebitCard      │ │
+│  │ jupyter_shared      (GID: 5004) ← fGLJupyterShared         │ │
+│  └────────────────────────────────────────────────────────────┘ │
+│                                                                 │
+│  ┌────────────────────────────────────────────────────────────┐ │
+│  │ PowerBroker Policies                                       │ │
+│  ├────────────────────────────────────────────────────────────┤ │
+│  │ fGLJupyterBanking members → pbrun -u sysbdhp_banking       │ │
+│  │ fGLJupyterCreditCard members → pbrun -u sysbdhp_creditcard │ │
+│  │ fGLJupyterDebitCard members → pbrun -u sysbdhp_debitcard   │ │
+│  └────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────┘
+                              ↓
+┌──────────────────────────────────────────────────────────────────┐
+│                   File System Structure                          │
+│                                                                  │
+│  /apps/tenant_local/anly_frwh/projects/fa/workspaces/            │
+│  │                                                               │
+│  ├── banking/           (Owner: sysbdhp_banking:jupyter_banking) │
+│  │   ├── notebooks/     (Perms: 2770 = rwxrws---)                │
+│  │   ├── data/                                                   │
+│  │   └── models/                                                 │
+│  │                                                               │
+│  ├── creditcard/   (Owner: sysbdhp_creditcard:jupyter_creditcard)│
+│  │   ├── notebooks/     (Perms: 2770 = rwxrws---)                │
+│  │   ├── data/                                                   │
+│  │   └── models/                                                 │
+│  │                                                               │
+│  ├── debitcard/     (Owner: sysbdhp_debitcard:jupyter_debitcard) │
+│  │   ├── notebooks/     (Perms: 2770 = rwxrws---)                │
+│  │   ├── data/                                                   │
+│  │   └── models/                                                 │
+│  │                                                               │
+│  └── shared/            (Owner: root:jupyter_shared)             │
+│      ├── notebooks/     (Perms: 2555 = r-xr-xr-x)                │
+│      ├── libraries/     (Perms: 2555 = r-xr-xr-x)                │
+│      └── data/          (Perms: 2775 = rwxrwsr-x)                │
+└──────────────────────────────────────────────────────────────────┘
+
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+Access Flow: Who Did What?
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+Step 1: Authentication
+├── John logs into Jump Server with RSA Token
+└── Identity verified: john.smith@barcapint.com
+
+Step 2: PowerBroker Authorization
+├── John executes: pbrun -h gbrpsr000021234 -u sysbdhp_banking bash
+├── PowerBroker checks: Is john.smith member of fGLJupyterBanking?
+├── Result: YES ✓
+├── PowerBroker logs: [2025-10-21 14:30:45] john.smith@barcapint.com accessed sysbdhp_banking on gbrpsr000021234
+└── Shell granted as sysbdhp_banking
+
+Step 3: File Creation
+├── John creates: /apps/.../banking/notebooks/risk_analysis.ipynb
+├── File owner: sysbdhp_banking
+├── File group: jupyter_banking (inherited via SGID)
+└── Permissions: -rw-rw---- (660)
+
+Step 4: Audit Trail (Assumption how flow is working)
+├── PowerBroker Log: Shows john.smith accessed sysbdhp_banking at 14:30:45
+├── File metadata: Shows file created by sysbdhp_banking at 14:31:22
+├── Jupyter logs: Shows notebook activity on port 8921 (Banking team port)
+└── Conclusion: John Smith from Banking team created risk_analysis.ipynb
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+What Happens if Thomas (Credit Card Team) Tries to Access Banking Files?
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+Step 1: Thomas accesses his team account
+├── thomas.anderson@barcapint.com
+└── pbrun -u sysbdhp_creditcard bash
+
+Step 2: Thomas tries to read Banking notebook
+├── $ cat /apps/.../banking/notebooks/risk_analysis.ipynb
+├── File permissions: -rw-rw---- sysbdhp_banking:jupyter_banking
+├── Thomas's groups: sysbdhp_creditcard (primary), jupyter_creditcard
+├── Check: Is sysbdhp_creditcard the owner? NO
+├── Check: Is sysbdhp_creditcard in jupyter_banking group? NO
+├── Check: Other permissions? --- (none)
+└── Result: Permission denied ✗
+
+Audit Trail:
+├── PowerBroker: thomas.anderson accessed sysbdhp_creditcard at 15:00:00
+├── System logs: Access denied to /apps/.../banking/notebooks/risk_analysis.ipynb
+└── Alert: Cross-team access attempt detected (optional)
+
+
++-----------------------+-------+---------------------------------------------------------------------------------+
+| Component             | Count | Details                                                                         |
++-----------------------+-------+---------------------------------------------------------------------------------+
+| AD Functional Groups  | 4     | fGLJupyterBanking, fGLJupyterCreditCard, fGLJupyterDebitCard, fGLJupyterShared  |
+| Unix Service Accounts | 3     | sysbdhp_banking, sysbdhp_creditcard, sysbdhp_debitcard                          |
+| Unix Groups           | 4     | jupyter_banking, jupyter_creditcard, jupyter_debitcard, jupyter_shared          |
+| User Accounts         | 30    | 10 per team (existing AD accounts)                                              |
+| Jupyter Ports         | 3     | 8921 (Banking), 8922 (Credit Card), 8923 (Debit Card)                           |
+| Workspaces            | 4     | banking/, creditcard/, debitcard/, shared/                                      |
++-----------------------+-------+---------------------------------------------------------------------------------+

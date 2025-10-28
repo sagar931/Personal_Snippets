@@ -1,0 +1,410 @@
+┌─────────────────────────────────────────────────────────────────┐
+│                    FRAUD ANALYTICS TEAMS                        │
+└─────────────────────────────────────────────────────────────────┘
+                            │
+        ┌───────────────────┴───────────────────┐
+        │                                       │
+   ┌────▼─────┐                          ┌──────▼────┐
+   │ PLASTIC  │                          │NON-PLASTIC│
+   └────┬─────┘                          └─────┬─────┘
+        │                                      │
+   ┌────┴─────────┐                      ┌─────┴────┐
+   │              │                      │          │
+┌──▼───┐    ┌────▼────┐            ┌─────▼─────┐    │
+│Credit│    │  Debit  │            │ Banking   │  (others)
+│ Card │    │  Card   │            │           │
+└──────┘    └─────────┘            └───────────┘
+10 users     10 users               10 users
+
+Organizational Structure Tables
+Division Level Overview
++-------------+-------------------------+-------------+------------------+---------------------+
+| Division    | Portfolios              | Total Users | Service Accounts | Parent Group        |
++-------------+-------------------------+-------------+------------------+---------------------+
+| Plastic     | Credit Card, Debit Card | 20          | 2                | jupyter_plastic     |
+| Non-Plastic | Banking                 | 10          | 1                | jupyter_nonplastic  |
+| Common      | All                     | 30          | 0                | jupyter_all         |
++-------------+-------------------------+-------------+------------------+---------------------+
+
+Complete Team Structure
+PLASTIC DIVISION
++----------------+-----------------------+-------------------------+-----------------------+-------+-------+
+| Portfolio      | Service Account       | AD Functional Group     | Unix Group            | Users | Port  |
++----------------+-----------------------+-------------------------+-----------------------+-------+-------+
+| Credit Card    | sysbdhp_pl_creditcard | fGLJupyterPlasticCredit | jupyter_pl_creditcard | 10    | 8921  |
+| Debit Card     | sysbdhp_pl_debitcard  | fGLJupyterPlasticDebit  | jupyter_pl_debitcard  | 10    | 8922  |
+| Plastic Shared | -                     | fGLJupyterPlastic       | jupyter_plastic       | 20    | -     |
++----------------+-----------------------+-------------------------+-----------------------+-------+-------+
+
+Credit Card Team Members (10 Users)
++-------------------+---------------------------------+---------------+---------------------------------------------+
+| Employee Name     | AD Username                     | Primary Group | Member Of                                   |
++-------------------+---------------------------------+---------------+---------------------------------------------+
+| Thomas Anderson   | thomas.anderson@barcapint.com   | Domain Users  | fGLJupyterPlasticCredit, fGLJupyterPlastic  |
+| Patricia White    | patricia.white@barcapint.com    | Domain Users  | fGLJupyterPlasticCredit, fGLJupyterPlastic  |
+| Christopher Moore | christopher.moore@barcapint.com | Domain Users  | fGLJupyterPlasticCredit, fGLJupyterPlastic  |
++-------------------+---------------------------------+---------------+---------------------------------------------+
+
+Debit Card Team Members (3 Users)
++---------------+-----------------------------+---------------+--------------------------------------------+
+| Employee Name | AD Username                 | Primary Group | Member Of                                  |
++---------------+-----------------------------+---------------+--------------------------------------------+
+| Richard Allen | richard.allen@barcapint.com | Domain Users  | fGLJupyterPlasticDebit, fGLJupyterPlastic  |
+| Nancy Young   | nancy.young@barcapint.com   | Domain Users  | fGLJupyterPlasticDebit, fGLJupyterPlastic  |
+| Charles King  | charles.king@barcapint.com  | Domain Users  | fGLJupyterPlasticDebit, fGLJupyterPlastic  |
++---------------+-----------------------------+---------------+--------------------------------------------+
+
+NON-PLASTIC DIVISION
++--------------------+--------------------+--------------------------+--------------------+-------+-------+
+| Portfolio          | Service Account    | AD Functional Group      | Unix Group         | Users | Port  |
++--------------------+--------------------+--------------------------+--------------------+-------+-------+
+| Banking            | sysbdhp_np_banking | fGLJupyterNonPlasticBank | jupyter_np_banking | 10    | 8923  |
+| Non-Plastic Shared | -                  | fGLJupyterNonPlastic     | jupyter_nonplastic | 10    | -     |
++--------------------+--------------------+--------------------------+--------------------+-------+-------+
+
+Banking Team Members (3 Users)
++---------------+-----------------------------+---------------+-------------------------------------------------+
+| Employee Name | AD Username                 | Primary Group | Member Of                                       |
++---------------+-----------------------------+---------------+-------------------------------------------------+
+| John Smith    | john.smith@barcapint.com    | Domain Users  | fGLJupyterNonPlasticBank, fGLJupyterNonPlastic  |
+| Sarah Johnson | sarah.johnson@barcapint.com | Domain Users  | fGLJupyterNonPlasticBank, fGLJupyterNonPlastic  |
+| Michael Brown | michael.brown@barcapint.com | Domain Users  | fGLJupyterNonPlasticBank, fGLJupyterNonPlastic  |
++---------------+-----------------------------+---------------+-------------------------------------------------+
+
+
+Complete Directory Structure with Hierarchy
+/apps/tenant_local/anly_frwh/projects/fa/
+│
+├── envs/                                           # Virtual Environments
+│   ├── plastic_creditcard_env/                     # Credit Card Python env
+│   ├── plastic_debitcard_env/                      # Debit Card Python env
+│   ├── nonplastic_banking_env/                     # Banking Python env
+│   ├── plastic_shared_env/                         # Shared Plastic env
+│   ├── nonplastic_shared_env/                      # Shared Non-Plastic env
+│   └── common_base_env/                            # Common base env
+│
+├── jupyter/                                        # Jupyter Environment Root
+│   │
+│   ├── usecase/                                    # Use Case Level (L2)
+│   │   │
+│   │   ├── plastic/                                # PLASTIC DIVISION (L3)
+│   │   │   │                                       # Owner: root:jupyter_plastic
+│   │   │   │                                       # Permissions: 2775 (rwxrwsr-x)
+│   │   │   │
+│   │   │   ├── creditcard/                         # Credit Card Portfolio (L4)
+│   │   │   │   │                                   # Owner: sysbdhp_pl_creditcard:jupyter_pl_creditcard
+│   │   │   │   │                                   # Permissions: 2770 (rwxrws---)
+│   │   │   │   │
+│   │   │   │   ├── notebooks/                      # Jupyter Notebooks
+│   │   │   │   │   ├── exploration/                # Ad-hoc analysis
+│   │   │   │   │   ├── production/                 # Production notebooks
+│   │   │   │   │   └── archive/                    # Old notebooks
+│   │   │   │   │
+│   │   │   │   ├── data/                           # Team Data
+│   │   │   │   │   ├── raw/                        # Raw input data
+│   │   │   │   │   ├── processed/                  # Cleaned data
+│   │   │   │   │   ├── interim/                    # Intermediate data
+│   │   │   │   │   └── final/                      # Final outputs
+│   │   │   │   │
+│   │   │   │   ├── scripts/                        # Python/Shell Scripts
+│   │   │   │   │   ├── etl/                        # ETL pipelines
+│   │   │   │   │   ├── analysis/                   # Analysis scripts
+│   │   │   │   │   └── automation/                 # Automation
+│   │   │   │   │
+│   │   │   │   ├── models/                         # ML Models
+│   │   │   │   │   ├── trained/                    # Trained models
+│   │   │   │   │   ├── experiments/                # Experiments
+│   │   │   │   │   └── production/                 # Prod models
+│   │   │   │   │
+│   │   │   │   ├── outputs/                        # Analysis Outputs
+│   │   │   │   │   ├── reports/                    # Reports
+│   │   │   │   │   ├── visualizations/             # Charts/Plots
+│   │   │   │   │   └── exports/                    # Exports
+│   │   │   │   │
+│   │   │   │   ├── logs/                           # Logs
+│   │   │   │   │   ├── jupyter/
+│   │   │   │   │   ├── application/
+│   │   │   │   │   └── error/
+│   │   │   │   │
+│   │   │   │   ├── configs/                        # Configs
+│   │   │   │   └── docs/                           # Documentation
+│   │   │   │
+│   │   │   ├── debitcard/                          # Debit Card Portfolio (L4)
+│   │   │   │   │                                   # Owner: sysbdhp_pl_debitcard:jupyter_pl_debitcard
+│   │   │   │   │                                   # Permissions: 2770 (rwxrws---)
+│   │   │   │   │
+│   │   │   │   ├── notebooks/
+│   │   │   │   │   ├── exploration/
+│   │   │   │   │   ├── production/
+│   │   │   │   │   └── archive/
+│   │   │   │   │
+│   │   │   │   ├── data/
+│   │   │   │   │   ├── raw/
+│   │   │   │   │   ├── processed/
+│   │   │   │   │   ├── interim/
+│   │   │   │   │   └── final/
+│   │   │   │   │
+│   │   │   │   ├── scripts/
+│   │   │   │   │   ├── etl/
+│   │   │   │   │   ├── analysis/
+│   │   │   │   │   └── automation/
+│   │   │   │   │
+│   │   │   │   ├── models/
+│   │   │   │   │   ├── trained/
+│   │   │   │   │   ├── experiments/
+│   │   │   │   │   └── production/
+│   │   │   │   │
+│   │   │   │   ├── outputs/
+│   │   │   │   │   ├── reports/
+│   │   │   │   │   ├── visualizations/
+│   │   │   │   │   └── exports/
+│   │   │   │   │
+│   │   │   │   ├── logs/
+│   │   │   │   │   ├── jupyter/
+│   │   │   │   │   ├── application/
+│   │   │   │   │   └── error/
+│   │   │   │   │
+│   │   │   │   ├── configs/
+│   │   │   │   └── docs/
+│   │   │   │
+│   │   │   └── common/                             # Plastic Division Shared (L4)
+│   │   │       │                                   # Owner: root:jupyter_plastic
+│   │   │       │                                   # Permissions: 2775 (rwxrwsr-x)
+│   │   │       │
+│   │   │       ├── notebooks/                      # Shared notebooks
+│   │   │       │   └── templates/                  # Templates (read-only: 2555)
+│   │   │       │
+│   │   │       ├── libraries/                      # Shared code
+│   │   │       │   ├── plastic_utils.py
+│   │   │       │   ├── card_validation.py
+│   │   │       │   └── fraud_models.py
+│   │   │       │
+│   │   │       ├── data/                           # Reference data
+│   │   │       │   ├── reference/
+│   │   │       │   │   ├── merchant_codes.csv
+│   │   │       │   │   └── card_bin_ranges.csv
+│   │   │       │   └── lookup_tables/
+│   │   │       │
+│   │   │       └── docs/                           # Plastic division docs
+│   │   │           ├── plastic_methodology.md
+│   │   │           └── card_fraud_patterns.pdf
+│   │   │
+│   │   ├── nonplastic/                             # NON-PLASTIC DIVISION (L3)
+│   │   │   │                                       # Owner: root:jupyter_nonplastic
+│   │   │   │                                       # Permissions: 2775 (rwxrwsr-x)
+│   │   │   │
+│   │   │   ├── banking/                            # Banking Portfolio (L4)
+│   │   │   │   │                                   # Owner: sysbdhp_np_banking:jupyter_np_banking
+│   │   │   │   │                                   # Permissions: 2770 (rwxrws---)
+│   │   │   │   │
+│   │   │   │   ├── notebooks/
+│   │   │   │   │   ├── exploration/
+│   │   │   │   │   ├── production/
+│   │   │   │   │   └── archive/
+│   │   │   │   │
+│   │   │   │   ├── data/
+│   │   │   │   │   ├── raw/
+│   │   │   │   │   ├── processed/
+│   │   │   │   │   ├── interim/
+│   │   │   │   │   └── final/
+│   │   │   │   │
+│   │   │   │   ├── scripts/
+│   │   │   │   │   ├── etl/
+│   │   │   │   │   ├── analysis/
+│   │   │   │   │   └── automation/
+│   │   │   │   │
+│   │   │   │   ├── models/
+│   │   │   │   │   ├── trained/
+│   │   │   │   │   ├── experiments/
+│   │   │   │   │   └── production/
+│   │   │   │   │
+│   │   │   │   ├── outputs/
+│   │   │   │   │   ├── reports/
+│   │   │   │   │   ├── visualizations/
+│   │   │   │   │   └── exports/
+│   │   │   │   │
+│   │   │   │   ├── logs/
+│   │   │   │   │   ├── jupyter/
+│   │   │   │   │   ├── application/
+│   │   │   │   │   └── error/
+│   │   │   │   │
+│   │   │   │   ├── configs/
+│   │   │   │   └── docs/
+│   │   │   │
+│   │   │   └── common/                             # Non-Plastic Division Shared (L4)
+│   │   │       │                                   # Owner: root:jupyter_nonplastic
+│   │   │       │                                   # Permissions: 2775 (rwxrwsr-x)
+│   │   │       │
+│   │   │       ├── notebooks/
+│   │   │       │   └── templates/                  # Templates (read-only: 2555)
+│   │   │       │
+│   │   │       ├── libraries/
+│   │   │       │   ├── nonplastic_utils.py
+│   │   │       │   ├── account_validation.py
+│   │   │       │   └── transaction_rules.py
+│   │   │       │
+│   │   │       ├── data/
+│   │   │       │   ├── reference/
+│   │   │       │   │   ├── bank_codes.csv
+│   │   │       │   │   └── account_types.csv
+│   │   │       │   └── lookup_tables/
+│   │   │       │
+│   │   │       └── docs/
+│   │   │           ├── nonplastic_methodology.md
+│   │   │           └── banking_fraud_patterns.pdf
+│   │   │
+│   │   └── common/                                 # CROSS-DIVISION SHARED (L3)
+│   │       │                                       # Owner: root:jupyter_all
+│   │       │                                       # Permissions: 2775 (rwxrwsr-x)
+│   │       │
+│   │       ├── notebooks/
+│   │       │   └── templates/                      # Universal templates (2555)
+│   │       │       ├── base_analysis_template.ipynb
+│   │       │       ├── reporting_template.ipynb
+│   │       │       └── ml_pipeline_template.ipynb
+│   │       │
+│   │       ├── libraries/                          # Universal libraries
+│   │       │   ├── __init__.py
+│   │       │   ├── common_utils.py
+│   │       │   ├── data_validation.py
+│   │       │   ├── plot_helpers.py
+│   │       │   └── connectors/
+│   │       │       ├── oracle_connector.py
+│   │       │       └── teradata_connector.py
+│   │       │
+│   │       ├── data/                               # Universal reference data
+│   │       │   ├── reference/
+│   │       │   │   ├── currency_rates.csv
+│   │       │   │   ├── country_codes.csv
+│   │       │   │   └── market_indices.csv
+│   │       │   └── lookup_tables/
+│   │       │
+│   │       └── docs/                               # Universal documentation (2555)
+│   │           ├── README.md
+│   │           ├── getting_started.md
+│   │           ├── coding_standards.md
+│   │           └── architecture_overview.pdf
+│   │
+│   └── archive/                                    # Archived Projects
+│       ├── 2024_q4/
+│       └── 2025_q1/
+│
+└── logs/                                           # System Logs
+    ├── powerbroker/
+    ├── jupyter_server/
+    └── audit/
+
+
++---------------------+-------------+------------+---------+----------------+--------------------+-------------------+
+| Resource            | Credit Card | Debit Card | Banking | Plastic Common | Non-Plastic Common | Universal Common  |
++---------------------+-------------+------------+---------+----------------+--------------------+-------------------+
+| plastic/creditcard/ | RWX         | ❌          | ❌       | R-X            | ❌                  | R-X               |
+| plastic/debitcard/  | ❌           | RWX        | ❌       | R-X            | ❌                  | R-X               |
+| nonplastic/banking/ | ❌           | ❌          | RWX     | ❌              | R-X                | R-X               |
+| plastic/common/     | R-X         | R-X        | ❌       | R-X            | ❌                  | R-X               |
+| nonplastic/common/  | ❌           | ❌          | R-X     | ❌              | R-X                | R-X               |
+| common/ (universal) | R-X         | R-X        | R-X     | R-X            | R-X                | R-X               |
++---------------------+-------------+------------+---------+----------------+--------------------+-------------------+
+
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                         ACTIVE DIRECTORY STRUCTURE                           │
+├──────────────────────────────────────────────────────────────────────────────┤
+│                                                                              │
+│  ┌────────────────────────────── PLASTIC DIVISION ────────────────────────┐  │
+│  │                                                                        │  │
+│  │  ┌─ fGLJupyterPlastic (Parent Group - GID: 5000)                       │  │
+│  │  │                                                                     │  │
+│  │  ├─── fGLJupyterPlasticCredit (GID: 5001)                              │  │
+│  │  │    └─ 10 Credit Card Team Members                                   │  │
+│  │  │                                                                     │  │
+│  │  └─── fGLJupyterPlasticDebit (GID: 5002)                               │  │
+│  │       └─ 10 Debit Card Team Members                                    │  │
+│  │                                                                        │  │
+│  └────────────────────────────────────────────────────────────────────────┘  │
+│                                                                              │
+│  ┌────────────────────────── NON-PLASTIC DIVISION ────────────────────────┐  │
+│  │                                                                        │  │
+│  │  ┌─ fGLJupyterNonPlastic (Parent Group - GID: 5100)                    │  │
+│  │  │                                                                     │  │
+│  │  └─── fGLJupyterNonPlasticBank (GID: 5101)                             │  │
+│  │       └─ 10 Banking Team Members                                       │  │
+│  │                                                                        │  │
+│  └────────────────────────────────────────────────────────────────────────┘  │
+│                                                                              │
+│  ┌─────────────────────────── UNIVERSAL ACCESS ──────── ───────────────────┐ │
+│  │                                                                         | │
+│  │  └─ fGLJupyterAll (GID: 5200)                                           │ │
+│  │     └─ All 30 Team Members                                              │ │
+│  │                                                                         │ │
+│  └─────────────────────────────────────────────────────────────────────────┘ │
+└──────────────────────────────────────────────────────────────────────────────┘
+                                   ↓
+                     [SSSD/Winbind - AD-Unix Integration]
+                                   ↓
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                        UNIX/LINUX EDGE NODE STRUCTURE                        │
+├──────────────────────────────────────────────────────────────────────────────┤
+│                                                                              │
+│  Service Accounts:                                                           │
+│  ├─ sysbdhp_pl_creditcard  (UID: 6001, GID: 5001)                            │
+│  ├─ sysbdhp_pl_debitcard   (UID: 6002, GID: 5002)                            │
+│  └─ sysbdhp_np_banking     (UID: 6003, GID: 5101)                            │
+│                                                                              │
+│  Unix Groups (mapped from AD):                                               │
+│  ├─ jupyter_plastic         (GID: 5000) ← fGLJupyterPlastic                  │
+│  ├─ jupyter_pl_creditcard   (GID: 5001) ← fGLJupyterPlasticCredit            │
+│  ├─ jupyter_pl_debitcard    (GID: 5002) ← fGLJupyterPlasticDebit             │
+│  ├─ jupyter_nonplastic      (GID: 5100) ← fGLJupyterNonPlastic               │
+│  ├─ jupyter_np_banking      (GID: 5101) ← fGLJupyterNonPlasticBank           │
+│  └─ jupyter_all             (GID: 5200) ← fGLJupyterAll                      │
+│                                                                              │
+└──────────────────────────────────────────────────────────────────────────────┘
+                                   ↓
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                          FILE SYSTEM STRUCTURE                               │
+├──────────────────────────────────────────────────────────────────────────────┤
+│                                                                              │
+│  /apps/tenant_local/anly_frwh/projects/fa/jupyter/usecase/                   │
+│                                                                              │
+│  ├── plastic/                    (root:jupyter_plastic, 2775)                │
+│  │   ├── creditcard/             (sysbdhp_pl_creditcard:                     |
+|  |   |   |                        jupyter_pl_creditcard, 2770)               │
+│  │   │   ├── notebooks/          [Credit Card Team: Full Access]             │
+│  │   │   ├── data/                                                           │
+│  │   │   ├── scripts/                                                        │
+│  │   │   ├── models/                                                         │
+│  │   │   └── ...                                                             │
+│  │   │                                                                       │
+│  │   ├── debitcard/              (sysbdhp_pl_debitcard:jupyter_pl_debitcard, |
+|  |   |   |                                                             2770) │
+│  │   │   ├── notebooks/          [Debit Card Team: Full Access]              │
+│  │   │   ├── data/                                                           │
+│  │   │   ├── scripts/                                                        │
+│  │   │   └── ...                                                             │
+│  │   │                                                                       │
+│  │   └── common/                 (root:jupyter_plastic, 2775)                │
+│  │       ├── notebooks/          [Both Plastic Teams: Read Access]           │
+│  │       ├── libraries/                                                      │
+│  │       └── data/                                                           │
+│  │                                                                           │
+│  ├── nonplastic/                 (root:jupyter_nonplastic, 2775)             │
+│  │   ├── banking/                (sysbdhp_np_banking:jupyter_np_banking,     |
+|  |   |   |                                                             2770) │
+│  │   │   ├── notebooks/          [Banking Team: Full Access]                 │
+│  │   │   ├── data/                                                           │
+│  │   │   ├── scripts/                                                        │
+│  │   │   └── ...                                                             │
+│  │   │                                                                       │
+│  │   └── common/                 (root:jupyter_nonplastic, 2775)             │
+│  │       ├── notebooks/          [Banking Team: Read Access]                 │
+│  │       ├── libraries/                                                      │
+│  │       └── data/                                                           │
+│  │                                                                           │
+│  └── common/                     (root:jupyter_all, 2775)                    │
+│      ├── notebooks/              [ALL Teams: Read Access]                    │
+│      ├── libraries/              [Universal Python modules]                  │
+│      ├── data/                   [Universal reference data]                  │
+│      └── docs/                   [Universal documentation]                   │
+│                                                                              │
+└──────────────────────────────────────────────────────────────────────────────┘
